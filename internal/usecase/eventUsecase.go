@@ -31,7 +31,7 @@ type GetEventByID interface {
 	GetEventByID(id int) (*domain.Event, error)
 }
 type GetEventByName interface {
-	GetEventByName(name string) (domain.Event, error)
+	GetEventByName(name string) (*domain.Event, error)
 }
 type UpdateEvent interface {
 	UpdateEvent(event domain.Event) error
@@ -49,7 +49,7 @@ func (uc EventUsecase) CreateEvent(event domain.Event) error {
 func (uc EventUsecase) GetEventByID(id int) (*domain.Event, error) {
 	return uc.EventRepo.GetEventByID(id)
 }
-func (uc EventUsecase) GetEventByName(name string) (domain.Event, error) {
+func (uc EventUsecase) GetEventByName(name string) (*domain.Event, error) {
 	return uc.EventRepo.GetEventByName(name)
 }
 func (uc EventUsecase) UpdateEvent(event domain.Event) error {

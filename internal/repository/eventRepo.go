@@ -31,7 +31,7 @@ type GetEventByID interface {
 	GetEventByID(id int) (*domain.Event, error)
 }
 type GetEventByName interface {
-	GetEventByName(name string) (domain.Event, error)
+	GetEventByName(name string) (*domain.Event, error)
 }
 type UpdateEvent interface {
 	UpdateEvent(event *domain.Event) error
@@ -68,17 +68,17 @@ func (repo EventRepo) GetEventByID(id int) (*domain.Event, error) {
 	return nil, errors.New("THERE'S NO EVENT WITH THAT ID")
 }
 
-func (repo EventRepo) GetEventByName(name string) (domain.Event, error) {
+func (repo EventRepo) GetEventByName(name string) (*domain.Event, error) {
 	for _, event := range repo.Events {
 		if event.Name == name {
-			return event, nil
+			return &event, nil
 		}
 	}
-	return domain.Event{}, nil
+	return nil, errors.New("THERE'S NO EVENT WITH THAT NAME🤬🚨🤬🚨")
 }
 
 func (repo EventRepo) UpdateEvent(event *domain.Event) error {
-	if _, exist := repo.Events[event.ID]; !exist{
+	if _, exist := repo.Events[event.ID]; !exist {
 		return errors.New("THERE'S NO EVENT WITH THAT ID🤬🤬🤬🚨🚨")
 	}
 	repo.Events[event.ID] = *event
@@ -86,7 +86,7 @@ func (repo EventRepo) UpdateEvent(event *domain.Event) error {
 }
 
 func (repo EventRepo) DeleteEvent(id int) error {
-	if _, exist := repo.Events[id]; !exist{
+	if _, exist := repo.Events[id]; !exist {
 		return errors.New("THERE'S NO EVENT WITH THAT ID🤬🚨🤬🚨")
 	}
 	delete(repo.Events, id)
@@ -97,6 +97,6 @@ func (repo EventRepo) GetAllEvents() ([]domain.Event, error) {
 	events := make([]domain.Event, 0, len(repo.Events))
 	for _, event := range repo.Events {
 		events = append(events, event)
-	}	
+	}
 	return events, nil
 }
