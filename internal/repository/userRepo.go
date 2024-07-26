@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"errors"
 	"pemesananTiketOnlineGo/internal/domain"
 )
@@ -25,72 +26,103 @@ type UserRepoInterface interface {
 	GetAllUsers
 }
 type CreateUser interface {
-	CreateUser(User *domain.User) error
+	CreateUser(User *domain.User, kontek context.Context) (*domain.User, error)
 }
 type GetUserByID interface {
-	GetUserByID(id int) (*domain.User, error)
+	GetUserByID(id int, kontek context.Context) (*domain.User, error)
 }
 type GetUserByName interface {
-	GetUserByName(name string) (*domain.User, error)
+	GetUserByName(name string, kontek context.Context) (*domain.User, error)
 }
 type UpdateUser interface {
-	UpdateUser(User *domain.User) error
+	UpdateUser(User *domain.User, kontek context.Context) error
 }
 type DeleteUser interface {
-	DeleteUser(id int) error
+	DeleteUser(id int, kontek context.Context) error
 }
 type GetAllUsers interface {
-	GetAllUsers() ([]domain.User, error)
+	GetAllUsers(kontek context.Context) ([]domain.User, error)
 }
 
-func (repo UserRepo) CreateUser(User *domain.User) error {
-	if repo.Users == nil || len(repo.Users) == 0 {
-		User.ID = 1
-	} else {
-		User.ID = repo.Users[len(repo.Users)].ID + 1
-	}
-	repo.Users[User.ID] = *User
-	return nil
-}
-
-func (repo UserRepo) GetUserByID(id int) (*domain.User, error) {
-	for _, User := range repo.Users {
-		if User.ID == id {
-			return &User, nil
+func (repo UserRepo) CreateUser(User *domain.User, kontek context.Context) (*domain.User, error) {
+	select {
+	case <-kontek.Done():
+		return nil, kontek.Err()
+	default:
+		if repo.Users == nil || len(repo.Users) == 0 {
+			User.ID = 1
+		} else {
+			User.ID = repo.Users[len(repo.Users)].ID + 1
 		}
+		repo.Users[User.ID] = *User
+		return User, nil
 	}
-	return nil, errors.New("THERE'S NO USER WITH THAT ID")
+
 }
 
-func (repo UserRepo) GetUserByName(name string) (*domain.User, error) {
-	for _, User := range repo.Users {
-		if User.Name == name {
-			return &User, nil
+func (repo UserRepo) GetUserByID(id int, kontek context.Context) (*domain.User, error) {
+	select {
+	case <-kontek.Done():
+		return nil, kontek.Err()
+	default:
+		for _, User := range repo.Users {
+			if User.ID == id {
+				return &User, nil
+			}
 		}
+		return nil, errors.New("THERE'S NO USER WITH THAT ID")
 	}
-	return nil, errors.New("THERE'S NO USER WITH THAT NAME🤬🚨🤬🚨")
 }
 
-func (repo UserRepo) UpdateUser(User *domain.User) error {
-	if _, exist := repo.Users[User.ID]; !exist {
-		return errors.New("THERE'S NO USER WITH THAT ID🤬🤬🤬🚨🚨")
+func (repo UserRepo) GetUserByName(name string, kontek context.Context) (*domain.User, error) {
+	select {
+	case <-kontek.Done():
+		return nil, kontek.Err()
+	default:
+		for _, User := range repo.Users {
+			if User.Name == name {
+				return &User, nil
+			}
+		}
+		return nil, errors.New("THERE'S NO USER WITH THAT NAME🤬🚨🤬🚨")
 	}
-	repo.Users[User.ID] = *User
-	return nil
 }
 
-func (repo UserRepo) DeleteUser(id int) error {
-	if _, exist := repo.Users[id]; !exist {
-		return errors.New("THERE'S NO USER WITH THAT ID🤬🚨🤬🚨")
+func (repo UserRepo) UpdateUser(User *domain.User, kontek context.Context) error {
+	select {
+	case <-kontek.Done():
+		return kontek.Err()
+	default:
+		if _, exist := repo.Users[User.ID]; !exist {
+			return errors.New("THERE'S NO USER WITH THAT ID🤬🤬🤬🚨🚨")
+		}
+		repo.Users[User.ID] = *User
+		return nil
 	}
-	delete(repo.Users, id)
-	return nil
 }
 
-func (repo UserRepo) GetAllUsers() ([]domain.User, error) {
-	Users := make([]domain.User, 0, len(repo.Users))
-	for _, User := range repo.Users {
-		Users = append(Users, User)
+func (repo UserRepo) DeleteUser(id int, kontek context.Context) error {
+	select {
+	case <-kontek.Done():
+		return kontek.Err()
+	default:
+		if _, exist := repo.Users[id]; !exist {
+			return errors.New("THERE'S NO USER WITH THAT ID🤬🚨🤬🚨")
+		}
+		delete(repo.Users, id)
+		return nil
 	}
-	return Users, nil
+}
+
+func (repo UserRepo) GetAllUsers(kontek context.Context) ([]domain.User, error) {
+	select {
+	case <-kontek.Done():
+		return nil, kontek.Err()
+	default:
+		Users := make([]domain.User, 0, len(repo.Users))
+		for _, User := range repo.Users {
+			Users = append(Users, User)
+		}
+		return Users, nil
+	}
 }

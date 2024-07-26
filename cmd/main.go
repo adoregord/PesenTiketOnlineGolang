@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"pemesananTiketOnlineGo/internal/domain"
@@ -36,7 +37,7 @@ func main() {
 	}
 
 	for _, value := range events {
-		eventUsecase.CreateEvent(value)
+		eventUsecase.CreateEvent(value, context.Background())
 	}
 
 	routes := http.NewServeMux()
@@ -53,7 +54,6 @@ func main() {
 	routes.HandleFunc("/userGetByName", userHandler.GetUserByName)
 	routes.HandleFunc("/userUpdate", userHandler.UpdateUser)
 	routes.HandleFunc("/userDelete", userHandler.DeleteUser)
-	
 
 	server := http.Server{}
 	server.Handler = routes

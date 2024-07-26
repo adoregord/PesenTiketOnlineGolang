@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"pemesananTiketOnlineGo/internal/domain"
 	"pemesananTiketOnlineGo/internal/repository"
 )
@@ -25,39 +26,39 @@ type UserUsecaseInterface interface {
 	GetAllUsers
 }
 type CreateUser interface {
-	CreateUser(User domain.User) error
+	CreateUser(User domain.User, kontek context.Context) (*domain.User, error)
 }
 type GetUserByID interface {
-	GetUserByID(id int) (*domain.User, error)
+	GetUserByID(id int, kontek context.Context) (*domain.User, error)
 }
 type GetUserByName interface {
-	GetUserByName(name string) (*domain.User, error)
+	GetUserByName(name string, kontek context.Context) (*domain.User, error)
 }
 type UpdateUser interface {
-	UpdateUser(User domain.User) error
+	UpdateUser(User domain.User, kontek context.Context) error
 }
 type DeleteUser interface {
-	DeleteUser(id int) error
+	DeleteUser(id int, kontek context.Context) error
 }
 type GetAllUsers interface {
-	GetAllUsers() ([]domain.User, error)
+	GetAllUsers(kontek context.Context) ([]domain.User, error)
 }
 
-func (uc UserUsecase) CreateUser(User domain.User) error {
-	return uc.UserRepo.CreateUser(&User)
+func (uc UserUsecase) CreateUser(User domain.User, kontek context.Context) (*domain.User, error) {
+	return uc.UserRepo.CreateUser(&User, kontek)
 }
-func (uc UserUsecase) GetUserByID(id int) (*domain.User, error) {
-	return uc.UserRepo.GetUserByID(id)
+func (uc UserUsecase) GetUserByID(id int, kontek context.Context) (*domain.User, error) {
+	return uc.UserRepo.GetUserByID(id, kontek)
 }
-func (uc UserUsecase) GetUserByName(name string) (*domain.User, error) {
-	return uc.UserRepo.GetUserByName(name)
+func (uc UserUsecase) GetUserByName(name string, kontek context.Context) (*domain.User, error) {
+	return uc.UserRepo.GetUserByName(name, kontek)
 }
-func (uc UserUsecase) UpdateUser(User domain.User) error {
-	return uc.UserRepo.UpdateUser(&User)
+func (uc UserUsecase) UpdateUser(User domain.User, kontek context.Context) error {
+	return uc.UserRepo.UpdateUser(&User, kontek)
 }
-func (uc UserUsecase) DeleteUser(id int) error {
-	return uc.UserRepo.DeleteUser(id)
+func (uc UserUsecase) DeleteUser(id int, kontek context.Context) error {
+	return uc.UserRepo.DeleteUser(id, kontek)
 }
-func (uc UserUsecase) GetAllUsers() ([]domain.User, error) {
-	return uc.UserRepo.GetAllUsers()
+func (uc UserUsecase) GetAllUsers(kontek context.Context) ([]domain.User, error) {
+	return uc.UserRepo.GetAllUsers(kontek)
 }

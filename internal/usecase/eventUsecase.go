@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"pemesananTiketOnlineGo/internal/domain"
 	"pemesananTiketOnlineGo/internal/repository"
 )
@@ -25,40 +26,39 @@ type EventUsecaseInterface interface {
 	GetAllEvents
 }
 type CreateEvent interface {
-	CreateEvent(event domain.Event) error
+	CreateEvent(event domain.Event, kontek context.Context) (*domain.Event, error)
 }
 type GetEventByID interface {
-	GetEventByID(id int) (*domain.Event, error)
+	GetEventByID(id int, kontek context.Context) (*domain.Event, error)
 }
 type GetEventByName interface {
-	GetEventByName(name string) (*domain.Event, error)
+	GetEventByName(name string, kontek context.Context) (*domain.Event, error)
 }
 type UpdateEvent interface {
-	UpdateEvent(event domain.Event) error
+	UpdateEvent(event domain.Event, kontek context.Context) error
 }
 type DeleteEvent interface {
-	DeleteEvent(id int) error
+	DeleteEvent(id int, kontek context.Context) error
 }
 type GetAllEvents interface {
-	GetAllEvents() ([]domain.Event, error)
+	GetAllEvents(kontek context.Context) ([]domain.Event, error)
 }
 
-func (uc EventUsecase) CreateEvent(event domain.Event) error {
-	return uc.EventRepo.CreateEvent(&event)
+func (uc EventUsecase) CreateEvent(event domain.Event, kontek context.Context) (*domain.Event, error) {
+	return uc.EventRepo.CreateEvent(&event, kontek)
 }
-func (uc EventUsecase) GetEventByID(id int) (*domain.Event, error) {
-	return uc.EventRepo.GetEventByID(id)
+func (uc EventUsecase) GetEventByID(id int, kontek context.Context) (*domain.Event, error) {
+	return uc.EventRepo.GetEventByID(id, kontek)
 }
-func (uc EventUsecase) GetEventByName(name string) (*domain.Event, error) {
-	return uc.EventRepo.GetEventByName(name)
+func (uc EventUsecase) GetEventByName(name string, kontek context.Context) (*domain.Event, error) {
+	return uc.EventRepo.GetEventByName(name, kontek)
 }
-func (uc EventUsecase) UpdateEvent(event domain.Event) error {
-	return uc.EventRepo.UpdateEvent(&event)
+func (uc EventUsecase) UpdateEvent(event domain.Event, kontek context.Context) error {
+	return uc.EventRepo.UpdateEvent(&event, kontek)
 }
-func (uc EventUsecase) DeleteEvent(id int) error {
-	return uc.EventRepo.DeleteEvent(id)
+func (uc EventUsecase) DeleteEvent(id int, kontek context.Context) error {
+	return uc.EventRepo.DeleteEvent(id, kontek)
 }
-func (uc EventUsecase) GetAllEvents() ([]domain.Event, error) {
-	return uc.EventRepo.GetAllEvents()
+func (uc EventUsecase) GetAllEvents(kontek context.Context) ([]domain.Event, error) {
+	return uc.EventRepo.GetAllEvents(kontek)
 }
-

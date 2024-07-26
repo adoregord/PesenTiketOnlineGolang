@@ -1,7 +1,7 @@
 package domain
 
 type Event struct {
-	ID          int      `json:"id"`
+	ID          int      `json:"id,omitempty"`
 	Name        string   `json:"name" validate:"required,noblank,min=2"`
 	Date        string   `json:"date" validate:"required,Datetime"`
 	Description string   `json:"description" validate:"required,noblank"`
