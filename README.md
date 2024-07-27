@@ -2,7 +2,7 @@
 
 This is a golang app about online ticket buy with goroutine and http. It runs on port 8080 and have 15 end points that can be used.
 
-##First this is the endpoint to get all event and tickets
+## First this is the endpoint to get all event and tickets
 ![Event Get All Screenshot](./images/EventGetAll.png)
 
 ## Next is the andpoint to add user and view users
