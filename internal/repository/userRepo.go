@@ -4,16 +4,19 @@ import (
 	"context"
 	"errors"
 	"pemesananTiketOnlineGo/internal/domain"
+	"sync"
 )
 
 // make User db with map
 type UserRepo struct {
 	Users map[int]domain.User
+	mutek *sync.Mutex
 }
 
 func NewUserRepo() UserRepoInterface {
 	return UserRepo{
 		Users: map[int]domain.User{},
+		mutek: &sync.Mutex{},
 	}
 }
 
@@ -45,6 +48,8 @@ type GetAllUsers interface {
 }
 
 func (repo UserRepo) CreateUser(User *domain.User, kontek context.Context) (*domain.User, error) {
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
 	select {
 	case <-kontek.Done():
 		return nil, kontek.Err()
@@ -61,6 +66,8 @@ func (repo UserRepo) CreateUser(User *domain.User, kontek context.Context) (*dom
 }
 
 func (repo UserRepo) GetUserByID(id int, kontek context.Context) (*domain.User, error) {
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
 	select {
 	case <-kontek.Done():
 		return nil, kontek.Err()
@@ -75,6 +82,8 @@ func (repo UserRepo) GetUserByID(id int, kontek context.Context) (*domain.User, 
 }
 
 func (repo UserRepo) GetUserByName(name string, kontek context.Context) (*domain.User, error) {
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
 	select {
 	case <-kontek.Done():
 		return nil, kontek.Err()
@@ -89,6 +98,8 @@ func (repo UserRepo) GetUserByName(name string, kontek context.Context) (*domain
 }
 
 func (repo UserRepo) UpdateUser(User *domain.User, kontek context.Context) error {
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
 	select {
 	case <-kontek.Done():
 		return kontek.Err()
@@ -102,6 +113,8 @@ func (repo UserRepo) UpdateUser(User *domain.User, kontek context.Context) error
 }
 
 func (repo UserRepo) DeleteUser(id int, kontek context.Context) error {
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
 	select {
 	case <-kontek.Done():
 		return kontek.Err()
@@ -115,6 +128,8 @@ func (repo UserRepo) DeleteUser(id int, kontek context.Context) error {
 }
 
 func (repo UserRepo) GetAllUsers(kontek context.Context) ([]domain.User, error) {
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
 	select {
 	case <-kontek.Done():
 		return nil, kontek.Err()

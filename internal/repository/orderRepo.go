@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"pemesananTiketOnlineGo/internal/domain"
+	"sync"
 	"time"
 )
 
@@ -13,6 +14,7 @@ type OrderRepo struct {
 	Orders    map[int]domain.Order
 	EventRepo EventRepoInterface
 	UserRepo  UserRepoInterface
+	mutek     *sync.Mutex
 }
 
 func NewOrderRepo(eventRepo EventRepoInterface, userRepo UserRepoInterface) OrderRepoInterface {
@@ -20,6 +22,7 @@ func NewOrderRepo(eventRepo EventRepoInterface, userRepo UserRepoInterface) Orde
 		Orders:    map[int]domain.Order{},
 		EventRepo: eventRepo,
 		UserRepo:  userRepo,
+		mutek:     &sync.Mutex{},
 	}
 }
 
@@ -32,14 +35,15 @@ type CreateOrder interface {
 	CreateOrder(orderReq domain.OrderRequest, kontek context.Context) (*domain.Order, error)
 }
 type GetOrderByID interface {
-	GetOrderByID(id int, kontek context.Context) (*domain.Order, error)
+	GetOrderByID(userID int, kontek context.Context) (*[]domain.Order, error)
 }
 type GetAllOrders interface {
 	GetAllOrders(kontek context.Context) ([]domain.Order, error)
 }
 
 func (repo OrderRepo) CreateOrder(orderReq domain.OrderRequest, kontek context.Context) (*domain.Order, error) {
-
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
 	select {
 	case <-kontek.Done():
 		return nil, kontek.Err()
@@ -126,21 +130,27 @@ func (repo OrderRepo) CreateOrder(orderReq domain.OrderRequest, kontek context.C
 	}
 }
 
-func (repo OrderRepo) GetOrderByID(id int, kontek context.Context) (*domain.Order, error) {
+// func to get All order by User ID
+func (repo OrderRepo) GetOrderByID(userID int, kontek context.Context) (*[]domain.Order, error) {
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
 	select {
 	case <-kontek.Done():
 		return nil, kontek.Err()
 	default:
+		var ordersUser []domain.Order
 		for _, Order := range repo.Orders {
-			if Order.ID == id {
-				return &Order, nil
+			if Order.User.ID == userID {
+				ordersUser = append(ordersUser, Order)
 			}
 		}
-		return nil, errors.New("THERE'S NO ORDER WITH THAT ID")
+		return &ordersUser, nil
 	}
 }
 
 func (repo OrderRepo) GetAllOrders(kontek context.Context) ([]domain.Order, error) {
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
 	select {
 	case <-kontek.Done():
 		return nil, kontek.Err()

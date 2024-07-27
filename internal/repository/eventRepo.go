@@ -4,16 +4,19 @@ import (
 	"context"
 	"errors"
 	"pemesananTiketOnlineGo/internal/domain"
+	"sync"
 )
 
 // make event db with map
 type EventRepo struct {
 	Events map[int]domain.Event
+	mutek  *sync.Mutex
 }
 
 func NewEventRepo() EventRepoInterface {
 	return EventRepo{
 		Events: map[int]domain.Event{},
+		mutek : &sync.Mutex{},
 	}
 }
 
@@ -45,6 +48,8 @@ type GetAllEvents interface {
 }
 
 func (repo EventRepo) CreateEvent(event *domain.Event, kontek context.Context) (*domain.Event, error) {
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
 	select {
 	case <-kontek.Done():
 		return nil, kontek.Err()
@@ -66,6 +71,8 @@ func (repo EventRepo) CreateEvent(event *domain.Event, kontek context.Context) (
 }
 
 func (repo EventRepo) GetEventByID(id int, kontek context.Context) (*domain.Event, error) {
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
 	select {
 	case <-kontek.Done():
 		return nil, kontek.Err()
@@ -80,6 +87,8 @@ func (repo EventRepo) GetEventByID(id int, kontek context.Context) (*domain.Even
 }
 
 func (repo EventRepo) GetEventByName(name string, kontek context.Context) (*domain.Event, error) {
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
 	select {
 	case <-kontek.Done():
 		return nil, kontek.Err()
@@ -94,6 +103,8 @@ func (repo EventRepo) GetEventByName(name string, kontek context.Context) (*doma
 }
 
 func (repo EventRepo) UpdateEvent(event *domain.Event, kontek context.Context) error {
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
 	select {
 	case <-kontek.Done():
 		return kontek.Err()
@@ -107,6 +118,8 @@ func (repo EventRepo) UpdateEvent(event *domain.Event, kontek context.Context) e
 }
 
 func (repo EventRepo) DeleteEvent(id int, kontek context.Context) error {
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
 	select {
 	case <-kontek.Done():
 		return kontek.Err()
@@ -120,6 +133,8 @@ func (repo EventRepo) DeleteEvent(id int, kontek context.Context) error {
 }
 
 func (repo EventRepo) GetAllEvents(kontek context.Context) ([]domain.Event, error) {
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
 	select {
 	case <-kontek.Done():
 		return nil, kontek.Err()

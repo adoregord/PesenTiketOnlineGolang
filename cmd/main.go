@@ -41,9 +41,11 @@ func main() {
 		{ID: 5, Name: "Concert5", Date: "03-Jan-2006 15:04:05", Description: "Awokwok5", Location: "Location5", Ticket: tickets},
 	}
 
-	for _, value := range events {
-		eventUsecase.CreateEvent(value, context.Background())
-	}
+	go func() {
+		for _, value := range events {
+			eventUsecase.CreateEvent(value, context.Background())
+		}
+	}()
 
 	routes := http.NewServeMux()
 	routes.HandleFunc("/event", eventHandler.CreateEvent)
@@ -60,17 +62,20 @@ func main() {
 	routes.HandleFunc("/userUpdate", userHandler.UpdateUser)
 	routes.HandleFunc("/userDelete", userHandler.DeleteUser)
 
-	routes.HandleFunc("/buyTicket", orderHandler.CreateOrder) // buy the ticket 
+	routes.HandleFunc("/buyTicket", orderHandler.CreateOrder) // buy the ticket
 	routes.HandleFunc("/orderGetAll", orderHandler.GetAllOrders)
 	routes.HandleFunc("/orderGetByUserId", orderHandler.GetOrderByID) // list all orders from that one user
 
 	server := http.Server{}
 	server.Handler = routes
 	server.Addr = ":8080"
+	go func() {
+		fmt.Println("Server berjalan di http://localhost:8080")
 
-	fmt.Println("Server berjalan di http://localhost:8080")
+		if err := server.ListenAndServe(); err != nil {
+			fmt.Println("Error starting server:", err)
+		}
+	}()
 
-	if err := server.ListenAndServe(); err != nil {
-		fmt.Println("Error starting server:", err)
-	}
+	select {}
 }

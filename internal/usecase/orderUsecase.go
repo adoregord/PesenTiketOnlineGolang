@@ -26,7 +26,7 @@ type CreateOrder interface {
 	CreateOrder(orederReq domain.OrderRequest, kontek context.Context) (*domain.Order, error)
 }
 type GetOrderByID interface {
-	GetOrderByID(id int, kontek context.Context) (*domain.Order, error)
+	GetOrderByID(id int, kontek context.Context) (*[]domain.Order, error)
 }
 type GetAllOrders interface {
 	GetAllOrders(kontek context.Context) ([]domain.Order, error)
@@ -35,8 +35,8 @@ type GetAllOrders interface {
 func (uc OrderUsecase) CreateOrder(orederReq domain.OrderRequest, kontek context.Context) (*domain.Order, error) {
 	return uc.OrderRepo.CreateOrder(orederReq, kontek)
 }
-func (uc OrderUsecase) GetOrderByID(id int, kontek context.Context) (*domain.Order, error) {
-	return uc.OrderRepo.GetOrderByID(id, kontek)
+func (uc OrderUsecase) GetOrderByID(userID int, kontek context.Context) (*[]domain.Order, error) {
+	return uc.OrderRepo.GetOrderByID(userID, kontek)
 }
 func (uc OrderUsecase) GetAllOrders(kontek context.Context) ([]domain.Order, error) {
 	return uc.OrderRepo.GetAllOrders(kontek)
