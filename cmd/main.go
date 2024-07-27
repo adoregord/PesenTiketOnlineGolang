@@ -21,6 +21,11 @@ func main() {
 	userUsecase := usecase.NewUserUsecase(userRepo)
 	userHandler := handler.NewUserHandler(userUsecase)
 
+	// order connection
+	orderRepo := repository.NewOrderRepo(eventRepo, userRepo)
+	orderUsecase := usecase.NewOrderUsecase(orderRepo)
+	orderHandler := handler.NewOrderHandler(orderUsecase)
+
 	// create event
 
 	tickets := []domain.Ticket{
@@ -42,7 +47,7 @@ func main() {
 
 	routes := http.NewServeMux()
 	routes.HandleFunc("/event", eventHandler.CreateEvent)
-	routes.HandleFunc("/eventGet", eventHandler.GetAllEvents)
+	routes.HandleFunc("/eventGet", eventHandler.GetAllEvents) //check all ticket and event
 	routes.HandleFunc("/eventGetById", eventHandler.GetEventByID)
 	routes.HandleFunc("/eventGetByName", eventHandler.GetEventByName)
 	routes.HandleFunc("/eventUpdate", eventHandler.UpdateEvent)
@@ -54,6 +59,10 @@ func main() {
 	routes.HandleFunc("/userGetByName", userHandler.GetUserByName)
 	routes.HandleFunc("/userUpdate", userHandler.UpdateUser)
 	routes.HandleFunc("/userDelete", userHandler.DeleteUser)
+
+	routes.HandleFunc("/buyTicket", orderHandler.CreateOrder) // buy the ticket 
+	routes.HandleFunc("/orderGetAll", orderHandler.GetAllOrders)
+	routes.HandleFunc("/orderGetByUserId", orderHandler.GetOrderByID) // list all orders from that one user
 
 	server := http.Server{}
 	server.Handler = routes
