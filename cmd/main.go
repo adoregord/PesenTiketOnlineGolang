@@ -8,9 +8,14 @@ import (
 	"pemesananTiketOnlineGo/internal/handler"
 	"pemesananTiketOnlineGo/internal/repository"
 	"pemesananTiketOnlineGo/internal/usecase"
+	"runtime"
+	"sync"
 )
 
 func main() {
+	runtime.GOMAXPROCS(4)
+	var wg sync.WaitGroup
+
 	// event connection
 	eventRepo := repository.NewEventRepo()
 	eventUsecase := usecase.NewEventUsecase(eventRepo)
@@ -41,7 +46,9 @@ func main() {
 		{ID: 5, Name: "Concert5", Date: "03-Jan-2006 15:04:05", Description: "Awokwok5", Location: "Location5", Ticket: tickets},
 	}
 
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		for _, value := range events {
 			eventUsecase.CreateEvent(value, context.Background())
 		}
@@ -69,13 +76,15 @@ func main() {
 	server := http.Server{}
 	server.Handler = routes
 	server.Addr = ":8080"
-	go func() {
-		fmt.Println("Server berjalan di http://localhost:8080")
 
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		fmt.Println("Server berjalan di http://localhost:8080")
 		if err := server.ListenAndServe(); err != nil {
 			fmt.Println("Error starting server:", err)
 		}
 	}()
 
-	select {}
+	wg.Wait()
 }

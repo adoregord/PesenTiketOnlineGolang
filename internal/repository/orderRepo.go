@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"errors"
-	"fmt"
 	"pemesananTiketOnlineGo/internal/domain"
 	"sync"
 	"time"
@@ -62,7 +61,6 @@ func (repo OrderRepo) CreateOrder(orderReq domain.OrderRequest, kontek context.C
 		}
 
 		// get event first from event repo get by ID
-		fmt.Println(orderReq.EventID)
 		event, err := repo.EventRepo.GetEventByID(orderReq.EventID, kontek)
 		if err != nil {
 			return nil, err
