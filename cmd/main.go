@@ -27,8 +27,8 @@ func main() {
 	userHandler := handler.NewUserHandler(userUsecase)
 
 	// order connection
-	orderRepo := repository.NewOrderRepo(eventRepo, userRepo)
-	orderUsecase := usecase.NewOrderUsecase(orderRepo)
+	orderRepo := repository.NewOrderRepo()
+	orderUsecase := usecase.NewOrderUsecase(orderRepo, eventRepo, userRepo)
 	orderHandler := handler.NewOrderHandler(orderUsecase)
 
 	// create event

@@ -90,6 +90,11 @@ func (h OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(domain.Response{Message: err.Error() + ", please make an account before buy a ticket", Status: http.StatusNotFound})
 			LogMethod("Create Order API Failed "+err.Error(), r.Method, kontek.Value(domain.Key("waktu")).(time.Time), http.StatusNotFound)
 			return
+		} else if err.Error() == "TICKET STOCK NOT ENOUGH" {
+			w.WriteHeader(http.StatusConflict)
+			json.NewEncoder(w).Encode(domain.Response{Message: err.Error(), Status: http.StatusConflict})
+			LogMethod("Create Order API Failed "+err.Error(), r.Method, kontek.Value(domain.Key("waktu")).(time.Time), http.StatusConflict)
+			return
 		}
 		json.NewEncoder(w).Encode(domain.Response{Message: err.Error(), Status: http.StatusInternalServerError})
 		LogMethod("Create Order API Failed "+err.Error(), r.Method, kontek.Value(domain.Key("waktu")).(time.Time), http.StatusInternalServerError)
@@ -141,6 +146,11 @@ func (h OrderHandler) GetOrderByID(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusGatewayTimeout)
 			json.NewEncoder(w).Encode(domain.Response{Message: err.Error(), Status: http.StatusGatewayTimeout})
 			LogMethod("Get Order By ID API Failed "+err.Error(), r.Method, kontek.Value(domain.Key("waktu")).(time.Time), http.StatusGatewayTimeout)
+			return
+		} else if err.Error() == "THIS USER HAVENT BUY A TICKET" {
+			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(domain.Response{Message: err.Error(), Status: http.StatusNotFound})
+			LogMethod("Get Order By ID API Failed "+err.Error(), r.Method, kontek.Value(domain.Key("waktu")).(time.Time), http.StatusNotFound)
 			return
 		}
 		w.WriteHeader(http.StatusNotFound)

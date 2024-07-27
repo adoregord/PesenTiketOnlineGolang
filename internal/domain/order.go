@@ -2,7 +2,7 @@ package domain
 
 type Order struct {
 	ID            int      `json:"id,omitempty"`
-	Date          string   `json:"date" validate:"Datetime"`
+	OrderDate     string   `json:"order_date" validate:"Datetime"`
 	Status        string   `json:"status"`
 	PaymentMethod string   `json:"payment_method,omitempty" validate:"noblank"`
 	User          User     `json:"user,omitempty" validate:"dive,min=2"`
