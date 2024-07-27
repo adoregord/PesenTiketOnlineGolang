@@ -21,7 +21,7 @@ This is a golang app about online ticket buy with goroutine and http. It runs on
 
 ![Result of Create Order](./images/ResultCreateOrder.png)
 
-## The log view should be like this everytime you hit an endpoint it will show wether it success or not
+## The log view should be like this everytime you hit an endpoint it will show whether it success or not
 
 ![Log View](./images/LogView.png)
 
