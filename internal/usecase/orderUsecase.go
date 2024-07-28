@@ -38,59 +38,54 @@ type GetAllOrders interface {
 }
 
 func (uc OrderUsecase) CreateOrder(orderReq domain.OrderRequest, kontek context.Context) (*domain.Order, error) {
-	select {
-	case <-kontek.Done():
-		return nil, kontek.Err()
-	default:
-		var order domain.Order
+	var order domain.Order
 
-		// get event first from event repo get by ID
-		event, err := uc.EventRepo.GetEventByID(orderReq.EventID, kontek)
-		if err != nil {
-			order.Status = "FAILED COULDN'T FIND EVENT ID🤬🚨🤬🚨"
-			return nil, err
-		}
-
-		// this one is just for checking the user so i can use defer func
-		user, err := uc.UserRepo.GetUserByID(orderReq.UserID, kontek)
-		if err != nil {
-			order.Status = err.Error()
-			return nil, err
-		}
-
-		defer func() {
-			order.OrderDate = time.Now().Format("02-Jan-2006 15:04:05")
-			order.User.ID = user.ID
-			order.User.Name = user.Name
-			order.Event.Name = event.Name
-			order.Event.Date = event.Date
-			order.Event.Location = event.Location
-			order.Event.Description = event.Description
-			uc.OrderRepo.CreateOrder(&order, kontek)
-		}()
-
-		// check if the stock ticket is available and get the total value
-		total, err := uc.EventRepo.CheckTotalValue(orderReq.EventID, orderReq.Ticket, kontek)
-		if err != nil {
-			order.Status = "FAILED " + err.Error()
-			return &order, err
-		}
-
-		// decrease the balance from user
-		_, err = uc.UserRepo.DecreaseBalance(orderReq.UserID, total, kontek)
-		if err != nil {
-			order.Status = "FAILED " + err.Error()
-			return &order, err
-		}
-
-		// decrease the total amount of ticket
-		uc.EventRepo.DecrementTicketStock(orderReq.EventID, orderReq.Ticket, kontek)
-
-		order.PaymentMethod = "QRIS"
-		order.Status = "SUCCESS"
-
-		return &order, nil
+	// get event first from event repo get by ID
+	event, err := uc.EventRepo.GetEventByID(orderReq.EventID, kontek)
+	if err != nil {
+		order.Status = "FAILED COULDN'T FIND EVENT ID🤬🚨🤬🚨"
+		return nil, err
 	}
+
+	// this one is just for checking the user so i can use defer func
+	user, err := uc.UserRepo.GetUserByID(orderReq.UserID, kontek)
+	if err != nil {
+		order.Status = err.Error()
+		return nil, err
+	}
+
+	defer func() {
+		order.OrderDate = time.Now().Format("02-Jan-2006 15:04:05")
+		order.User.ID = user.ID
+		order.User.Name = user.Name
+		order.Event.Name = event.Name
+		order.Event.Date = event.Date
+		order.Event.Location = event.Location
+		order.Event.Description = event.Description
+		uc.OrderRepo.CreateOrder(&order, kontek)
+	}()
+
+	// check if the stock ticket is available and get the total value
+	total, err := uc.EventRepo.CheckTotalValue(orderReq.EventID, orderReq.Ticket, kontek)
+	if err != nil {
+		order.Status = "FAILED " + err.Error()
+		return &order, err
+	}
+
+	// decrease the balance from user
+	_, err = uc.UserRepo.DecreaseBalance(orderReq.UserID, total, kontek)
+	if err != nil {
+		order.Status = "FAILED " + err.Error()
+		return &order, err
+	}
+
+	// decrease the total amount of ticket
+	uc.EventRepo.DecrementTicketStock(orderReq.EventID, orderReq.Ticket, kontek)
+
+	order.PaymentMethod = "QRIS"
+	order.Status = "SUCCESS"
+
+	return &order, nil
 }
 func (uc OrderUsecase) GetOrderByID(userID int, kontek context.Context) ([]domain.Order, error) {
 	return uc.OrderRepo.GetOrderByID(userID, kontek)
