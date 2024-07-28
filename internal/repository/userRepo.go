@@ -81,7 +81,7 @@ func (repo UserRepo) GetUserByID(id int, kontek context.Context) (*domain.User, 
 				return &User, nil
 			}
 		}
-		return nil, errors.New("THERE'S NO USER WITH THAT ID")
+		return nil, errors.New("THERE'S NO USER WITH THAT ID🤬🚨🤬🚨")
 	}
 }
 

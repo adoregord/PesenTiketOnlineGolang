@@ -90,7 +90,7 @@ func (repo EventRepo) GetEventByID(id int, kontek context.Context) (*domain.Even
 				return &event, nil
 			}
 		}
-		return nil, errors.New("THERE'S NO EVENT WITH THAT ID")
+		return nil, errors.New("THERE'S NO EVENT WITH THAT ID🤬🚨🤬🚨")
 	}
 }
 
@@ -196,7 +196,7 @@ func (repo EventRepo) CheckTotalValue(eventID int, tickets []domain.Ticket, ctx 
 		for _, ticket := range tickets {
 			if eventTicket.ID == ticket.ID || eventTicket.Type == ticket.Type {
 				if eventTicket.Quantity < ticket.Quantity {
-					return 0, errors.New("not enough ticket stock")
+					return 0, errors.New("NOT ENOUGH TICKET STOCK🤬🚨🤬🚨")
 				}
 				total += (eventTicket.Price) * float64(ticket.Quantity)
 			}

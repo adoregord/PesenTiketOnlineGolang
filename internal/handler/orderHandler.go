@@ -80,20 +80,25 @@ func (h OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(domain.Response{Message: err.Error(), Status: http.StatusGatewayTimeout})
 			LogMethod("Create Order API Failed "+err.Error(), r.Method, kontek.Value(domain.Key("waktu")).(time.Time), http.StatusGatewayTimeout)
 			return
-		} else if err.Error() == "INSUFFICIENT BALANCE" {
+		} else if err.Error() == "INSUFFICIENT BALANCE🤬🤬🤬🚨🚨" {
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(domain.Response{Message: err.Error(), Status: http.StatusBadRequest})
-			LogMethod("Create Order API Failed "+err.Error(), r.Method, kontek.Value(domain.Key("waktu")).(time.Time), http.StatusGatewayTimeout)
+			LogMethod("Create Order API Failed "+err.Error(), r.Method, kontek.Value(domain.Key("waktu")).(time.Time), http.StatusBadRequest)
 			return
-		} else if err.Error() == "THERE'S NO USER WITH THAT ID" {
+		} else if err.Error() == "THERE'S NO USER WITH THAT ID🤬🚨🤬🚨" {
 			w.WriteHeader(http.StatusNotFound)
 			json.NewEncoder(w).Encode(domain.Response{Message: err.Error() + ", please make an account before buy a ticket", Status: http.StatusNotFound})
 			LogMethod("Create Order API Failed "+err.Error(), r.Method, kontek.Value(domain.Key("waktu")).(time.Time), http.StatusNotFound)
 			return
-		} else if err.Error() == "TICKET STOCK NOT ENOUGH" {
+		} else if err.Error() == "NOT ENOUGH TICKET STOCK🤬🚨🤬🚨" {
 			w.WriteHeader(http.StatusConflict)
 			json.NewEncoder(w).Encode(domain.Response{Message: err.Error(), Status: http.StatusConflict})
 			LogMethod("Create Order API Failed "+err.Error(), r.Method, kontek.Value(domain.Key("waktu")).(time.Time), http.StatusConflict)
+			return
+		} else if err.Error() == "THERE'S NO EVENT WITH THAT ID🤬🚨🤬🚨" {
+			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(domain.Response{Message: err.Error(), Status: http.StatusNotFound})
+			LogMethod("Create Order API Failed "+err.Error(), r.Method, kontek.Value(domain.Key("waktu")).(time.Time), http.StatusNotFound)
 			return
 		}
 		json.NewEncoder(w).Encode(domain.Response{Message: err.Error(), Status: http.StatusInternalServerError})

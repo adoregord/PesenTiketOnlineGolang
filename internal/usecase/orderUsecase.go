@@ -47,22 +47,15 @@ func (uc OrderUsecase) CreateOrder(orderReq domain.OrderRequest, kontek context.
 		// get event first from event repo get by ID
 		event, err := uc.EventRepo.GetEventByID(orderReq.EventID, kontek)
 		if err != nil {
-			order.Status = "FAILED COULDN'T FIND EVENT ID"
+			order.Status = "FAILED COULDN'T FIND EVENT ID🤬🚨🤬🚨"
 			return nil, err
 		}
 
-		// check if the stock ticket is available and get the total value
-		total, err := uc.EventRepo.CheckTotalValue(orderReq.EventID, orderReq.Ticket, kontek)
+		// this one is just for checking the user so i can use defer func
+		user, err := uc.UserRepo.GetUserByID(orderReq.UserID, kontek)
 		if err != nil {
 			order.Status = err.Error()
-			return &order, err
-		}
-
-		// get user details and decrease the balance from user
-		user, err := uc.UserRepo.DecreaseBalance(orderReq.UserID, total, kontek)
-		if err != nil {
-			order.Status = err.Error()
-			return &order, err
+			return nil, err
 		}
 
 		defer func() {
@@ -75,6 +68,20 @@ func (uc OrderUsecase) CreateOrder(orderReq domain.OrderRequest, kontek context.
 			order.Event.Description = event.Description
 			uc.OrderRepo.CreateOrder(&order, kontek)
 		}()
+
+		// check if the stock ticket is available and get the total value
+		total, err := uc.EventRepo.CheckTotalValue(orderReq.EventID, orderReq.Ticket, kontek)
+		if err != nil {
+			order.Status = "FAILED " + err.Error()
+			return &order, err
+		}
+
+		// decrease the balance from user
+		_, err = uc.UserRepo.DecreaseBalance(orderReq.UserID, total, kontek)
+		if err != nil {
+			order.Status = "FAILED " + err.Error()
+			return &order, err
+		}
 
 		// decrease the total amount of ticket
 		uc.EventRepo.DecrementTicketStock(orderReq.EventID, orderReq.Ticket, kontek)
