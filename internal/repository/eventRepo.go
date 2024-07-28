@@ -16,7 +16,7 @@ type EventRepo struct {
 func NewEventRepo() EventRepoInterface {
 	return EventRepo{
 		Events: map[int]domain.Event{},
-		mutek : &sync.Mutex{},
+		mutek:  &sync.Mutex{},
 	}
 }
 
@@ -27,6 +27,8 @@ type EventRepoInterface interface {
 	UpdateEvent
 	DeleteEvent
 	GetAllEvents
+	DecrementTicketStock
+	CheckTotalValue
 }
 type CreateEvent interface {
 	CreateEvent(event *domain.Event, kontek context.Context) (*domain.Event, error)
@@ -45,6 +47,12 @@ type DeleteEvent interface {
 }
 type GetAllEvents interface {
 	GetAllEvents(kontek context.Context) ([]domain.Event, error)
+}
+type DecrementTicketStock interface {
+	DecrementTicketStock(eventID int, tickets []domain.Ticket, ctx context.Context) error
+}
+type CheckTotalValue interface {
+	CheckTotalValue(eventID int, tickets []domain.Ticket, ctx context.Context) (float64, error)
 }
 
 func (repo EventRepo) CreateEvent(event *domain.Event, kontek context.Context) (*domain.Event, error) {
@@ -145,4 +153,55 @@ func (repo EventRepo) GetAllEvents(kontek context.Context) ([]domain.Event, erro
 		}
 		return events, nil
 	}
+}
+
+func (repo EventRepo) DecrementTicketStock(eventID int, tickets []domain.Ticket, ctx context.Context) error {
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
+	event, exists := repo.Events[eventID]
+	if !exists {
+		return errors.New("event not found")
+	}
+
+	var updatedTickets []domain.Ticket
+	// var total float64
+	for _, eventTicket := range event.Ticket {
+		for _, ticket := range tickets {
+			if eventTicket.ID == ticket.ID || eventTicket.Type == ticket.Type {
+				if eventTicket.Quantity < ticket.Quantity {
+					return errors.New("not enough ticket stock")
+				}
+				eventTicket.Quantity -= ticket.Quantity
+				// total += eventTicket.Price * float64(ticket.Quantity)
+			}
+		}
+		updatedTickets = append(updatedTickets, eventTicket)
+	}
+
+	event.Ticket = updatedTickets
+	repo.Events[event.ID] = event
+	return nil
+}
+
+func (repo EventRepo) CheckTotalValue(eventID int, tickets []domain.Ticket, ctx context.Context) (float64, error) {
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
+	event, exists := repo.Events[eventID]
+	if !exists {
+		return 0, errors.New("event not found")
+	}
+
+	var total float64
+	for _, eventTicket := range event.Ticket {
+		for _, ticket := range tickets {
+			if eventTicket.ID == ticket.ID || eventTicket.Type == ticket.Type {
+				if eventTicket.Quantity < ticket.Quantity {
+					return 0, errors.New("not enough ticket stock")
+				}
+				total += (eventTicket.Price) * float64(ticket.Quantity)
+			}
+		}
+	}
+
+	return total, nil
 }

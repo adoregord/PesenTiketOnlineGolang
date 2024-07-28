@@ -27,6 +27,7 @@ type UserRepoInterface interface {
 	UpdateUser
 	DeleteUser
 	GetAllUsers
+	DecreaseBalance
 }
 type CreateUser interface {
 	CreateUser(User *domain.User, kontek context.Context) (*domain.User, error)
@@ -45,6 +46,9 @@ type DeleteUser interface {
 }
 type GetAllUsers interface {
 	GetAllUsers(kontek context.Context) ([]domain.User, error)
+}
+type DecreaseBalance interface {
+	DecreaseBalance(userID int, totalAmount float64, kontek context.Context) (*domain.User, error)
 }
 
 func (repo UserRepo) CreateUser(User *domain.User, kontek context.Context) (*domain.User, error) {
@@ -139,5 +143,25 @@ func (repo UserRepo) GetAllUsers(kontek context.Context) ([]domain.User, error) 
 			Users = append(Users, User)
 		}
 		return Users, nil
+	}
+}
+
+func (repo UserRepo) DecreaseBalance(userID int, totalAmount float64, kontek context.Context) (*domain.User, error) {
+	repo.mutek.Lock()
+	defer repo.mutek.Unlock()
+	select {
+	case <-kontek.Done():
+		return nil, kontek.Err()
+	default:
+		user, exist := repo.Users[userID]
+		if !exist {
+			return nil, errors.New("THERE'S NO USER WITH THAT ID🤬🤬🤬🚨🚨")
+		}
+		if user.Balance < totalAmount {
+			return nil, errors.New("INSUFFICIENT BALANCE🤬🤬🤬🚨🚨")
+		}
+		user.Balance -= totalAmount
+		repo.Users[userID] = user
+		return &user, nil
 	}
 }
