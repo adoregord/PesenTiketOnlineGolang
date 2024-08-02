@@ -49,10 +49,10 @@ type GetAllEvents interface {
 	GetAllEvents(kontek context.Context) ([]domain.Event, error)
 }
 type DecrementTicketStock interface {
-	DecrementTicketStock(eventID int, tickets []domain.Ticket, ctx context.Context) error
+	DecrementTicketStock(eventID int, tickets []domain.Ticket, kontek context.Context) error
 }
 type CheckTotalValue interface {
-	CheckTotalValue(eventID int, tickets []domain.Ticket, ctx context.Context) (float64, error)
+	CheckTotalValue(eventID int, tickets []domain.Ticket, kontek context.Context) (float64, error)
 }
 
 func (repo EventRepo) CreateEvent(event *domain.Event, kontek context.Context) (*domain.Event, error) {
@@ -155,7 +155,7 @@ func (repo EventRepo) GetAllEvents(kontek context.Context) ([]domain.Event, erro
 	}
 }
 
-func (repo EventRepo) DecrementTicketStock(eventID int, tickets []domain.Ticket, ctx context.Context) error {
+func (repo EventRepo) DecrementTicketStock(eventID int, tickets []domain.Ticket, kontek context.Context) error {
 	repo.mutek.Lock()
 	defer repo.mutek.Unlock()
 	event, exists := repo.Events[eventID]
@@ -183,7 +183,7 @@ func (repo EventRepo) DecrementTicketStock(eventID int, tickets []domain.Ticket,
 	return nil
 }
 
-func (repo EventRepo) CheckTotalValue(eventID int, tickets []domain.Ticket, ctx context.Context) (float64, error) {
+func (repo EventRepo) CheckTotalValue(eventID int, tickets []domain.Ticket, kontek context.Context) (float64, error) {
 	repo.mutek.Lock()
 	defer repo.mutek.Unlock()
 	event, exists := repo.Events[eventID]
