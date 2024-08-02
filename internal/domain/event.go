@@ -6,5 +6,5 @@ type Event struct {
 	Date        string   `json:"date" validate:"required,Datetime"`
 	Description string   `json:"description" validate:"required,noblank"`
 	Location    string   `json:"location" validate:"required,noblank"`
-	Ticket      []Ticket `json:"ticket,omitempty" validate:"required,dive"`
+	Ticket      []Ticket `json:"ticket,omitempty" validate:"dive"`
 }
