@@ -8,6 +8,8 @@ import (
 	"pemesananTiketOnlineGo/internal/domain"
 	"pemesananTiketOnlineGo/internal/usecase2"
 	"pemesananTiketOnlineGo/internal/util"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -26,10 +28,18 @@ func NewOrderHandler(orderUsecase usecase2.OrderUsecaseInterface) OrderHandlerIn
 
 type OrderHandlerInterface interface {
 	CreateOrderDB
+	ViewAllOrdersDB
+	ViewUsersOrder
 }
 
 type CreateOrderDB interface {
 	CreateOrderDB(c *gin.Context)
+}
+type ViewAllOrdersDB interface {
+	ViewAllOrdersDB(c *gin.Context)
+}
+type ViewUsersOrder interface {
+	ViewUsersOrder(c *gin.Context)
 }
 
 // function for creating order in db
@@ -126,4 +136,124 @@ func (h OrderHandler) CreateOrderDB(c *gin.Context) {
 	c.JSON(http.StatusOK, domain.Response{Message: "Success creating order!", Status: http.StatusOK, Data: Orders})
 	logMessage = "Create Order API Success"
 	logStatus = http.StatusOK
+}
+
+// function for viewing all orders in db
+func (h OrderHandler) ViewAllOrdersDB(c *gin.Context) {
+	kontek := context.WithValue(c.Request.Context(), domain.Key("waktu"), time.Now())
+	// update the kontek to have context timeout in it
+	kontek, cancel := context.WithTimeout(kontek, 5*time.Second)
+
+	var logError error
+	var logMessage string
+	var logStatus int
+
+	defer func() {
+		cancel()
+		if logError != nil {
+			util.LogFailed(logMessage, c.Request.Method, kontek.Value(domain.Key("waktu")).(time.Time), logStatus, logError)
+		} else {
+			util.LogSuccess(logMessage, c.Request.Method, kontek.Value(domain.Key("waktu")).(time.Time), logStatus)
+		}
+	}()
+
+	c.Writer.Header().Set("Content-Type", "application/json")
+
+	// check if the method is post
+	if c.Request.Method != "GET" {
+		c.JSON(http.StatusMethodNotAllowed, domain.Response{Message: "Method not allowed", Status: http.StatusMethodNotAllowed})
+		logError = errors.New("method not allowed")
+		logMessage = "View Orders API Failed"
+		logStatus = http.StatusMethodNotAllowed
+		return
+	}
+
+	// send the data to usecase
+	Orders, err := h.OrderUsecase.ViewAllOrdersDB(kontek)
+	if err != nil {
+		if err.Error() == "context deadline exceeded" {
+			c.JSON(http.StatusGatewayTimeout, domain.Response{Message: err.Error(), Status: http.StatusGatewayTimeout})
+			logError = err
+			logMessage = "View Orders API Failed"
+			logStatus = http.StatusGatewayTimeout
+			return
+		}
+		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error(), Status: http.StatusInternalServerError})
+		logError = err
+		logMessage = "View Orders API Failed"
+		logStatus = http.StatusInternalServerError
+		return
+	}
+	c.JSON(http.StatusOK, domain.Response{Message: "Success", Status: http.StatusOK, Data: Orders})
+	logMessage = "View Orders API Success"
+	logStatus = http.StatusOK
+}
+
+// function to see user's order
+func (h OrderHandler) ViewUsersOrder(c *gin.Context) {
+	kontek := context.WithValue(c.Request.Context(), domain.Key("waktu"), time.Now())
+	// update the kontek to have context timeout in it
+	kontek, cancel := context.WithTimeout(kontek, 5*time.Second)
+
+	var logError error
+	var logMessage string
+	var logStatus int
+
+	defer func() {
+		cancel()
+		if logError != nil {
+			util.LogFailed(logMessage, c.Request.Method, kontek.Value(domain.Key("waktu")).(time.Time), logStatus, logError)
+		} else {
+			util.LogSuccess(logMessage, c.Request.Method, kontek.Value(domain.Key("waktu")).(time.Time), logStatus)
+		}
+	}()
+
+	c.Writer.Header().Set("Content-Type", "application/json")
+
+	// check if the method is post
+	if c.Request.Method != "GET" {
+		c.JSON(http.StatusMethodNotAllowed, domain.Response{Message: "Method not allowed", Status: http.StatusMethodNotAllowed})
+		logError = errors.New("method not allowed")
+		logMessage = "View user's orders API Failed"
+		logStatus = http.StatusMethodNotAllowed
+		return
+	}
+
+	UserIDStr := c.Request.URL.Query().Get("id")
+	if strings.TrimSpace(UserIDStr) == "" {
+		c.JSON(http.StatusBadRequest, domain.Response{Message: "Missing user ID in uri param", Status: http.StatusBadRequest})
+		logError = errors.New("missing user ID in uri param")
+		logMessage = "View user's orders API Failed"
+		logStatus = http.StatusBadRequest
+		return
+	}
+	UserID, err := strconv.Atoi(UserIDStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.Response{Message: err.Error(), Status: http.StatusBadRequest})
+		logError = err
+		logMessage = "View user's orders API Failed"
+		logStatus = http.StatusBadRequest
+		return
+	}
+
+	// send the data to usecase
+	Orders, err := h.OrderUsecase.ViewUsersOrder(UserID, kontek)
+	if err != nil {
+		if err.Error() == "context deadline exceeded" {
+			c.JSON(http.StatusGatewayTimeout, domain.Response{Message: err.Error(), Status: http.StatusGatewayTimeout})
+			logError = err
+			logMessage = "View user's orders API Failed"
+			logStatus = http.StatusGatewayTimeout
+			return
+		}
+		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error(), Status: http.StatusInternalServerError})
+		logError = err
+		logMessage = "View user's orders API Failed"
+		logStatus = http.StatusInternalServerError
+		return
+	}
+	c.JSON(http.StatusOK, domain.Response{Message: "Success", Status: http.StatusOK, Data: Orders})
+	logMessage = "View user's orders API Success"
+	logStatus = http.StatusOK
+
 }

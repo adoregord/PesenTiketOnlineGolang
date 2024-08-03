@@ -23,10 +23,18 @@ func NewOrderUsecase(orderRepo repository2.OrderRepoInterface, eventRepo reposit
 
 type OrderUsecaseInterface interface {
 	CreateOrderDB
+	ViewAllOrdersDB
+	ViewUsersOrder
 }
 
 type CreateOrderDB interface {
 	CreateOrderDB(orderReq *domain.OrderRequest, kontek context.Context) (*domain.Order, error)
+}
+type ViewAllOrdersDB interface {
+	ViewAllOrdersDB(kontek context.Context) (*[]domain.Order, error)
+}
+type ViewUsersOrder interface {
+	ViewUsersOrder(UserID int, kontek context.Context) (*[]domain.Order, error)
 }
 
 func (uc OrderUsecase) CreateOrderDB(orderReq *domain.OrderRequest, kontek context.Context) (*domain.Order, error) {
@@ -50,7 +58,7 @@ func (uc OrderUsecase) CreateOrderDB(orderReq *domain.OrderRequest, kontek conte
 			}
 		}
 	}
-	
+
 	total, err := uc.EventRepo.CheckTotalValueDB(orderReq.EventID, orderReq.Ticket, kontek)
 	if err != nil {
 		return nil, err
@@ -89,4 +97,12 @@ func (uc OrderUsecase) CreateOrderDB(orderReq *domain.OrderRequest, kontek conte
 	order.Status = "SUCCESS"
 
 	return &order, nil
+}
+
+func (uc OrderUsecase) ViewAllOrdersDB(kontek context.Context) (*[]domain.Order, error) {
+	return uc.OrderRepo.ViewAllOrdersDB(kontek)
+}
+
+func (uc OrderUsecase) ViewUsersOrder(UserID int, kontek context.Context) (*[]domain.Order, error) {
+	return uc.OrderRepo.ViewUsersOrder(UserID, kontek)
 }

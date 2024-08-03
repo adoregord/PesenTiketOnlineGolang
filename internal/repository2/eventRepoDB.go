@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"pemesananTiketOnlineGo/internal/domain"
 	"sync"
 )
@@ -41,10 +40,10 @@ type ViewEventByIdDB interface {
 	ViewEventByIdDB(eventID int, kontek context.Context) (*domain.Event, error)
 }
 type CheckTotalValueDB interface {
-	CheckTotalValueDB(eventID int, tickets []domain.Ticket, kontek context.Context) (float64, error)
+	CheckTotalValueDB(eventID int, tickets []domain.TicketReq, kontek context.Context) (float64, error)
 }
 type DecrementTicketStockDB interface {
-	DecrementTicketStockDB(eventID int, tickets []domain.Ticket, kontek context.Context) error
+	DecrementTicketStockDB(eventID int, tickets []domain.TicketReq, kontek context.Context) error
 }
 type DeleteEventDB interface {
 	DeleteEventDB(eventID int, kontek context.Context) error
@@ -247,12 +246,11 @@ func (repo EventRepo) ViewEventByIdDB(eventID int, kontek context.Context) (*dom
 	}
 
 	event.Ticket = tickets
-	fmt.Println(event.Ticket)
 
 	return &event, err
 }
 
-func (repo EventRepo) CheckTotalValueDB(eventID int, tickets []domain.Ticket, kontek context.Context) (float64, error) {
+func (repo EventRepo) CheckTotalValueDB(eventID int, tickets []domain.TicketReq, kontek context.Context) (float64, error) {
 	repo.mutek.Lock()
 	defer repo.mutek.Unlock()
 
@@ -290,7 +288,6 @@ func (repo EventRepo) CheckTotalValueDB(eventID int, tickets []domain.Ticket, ko
 
 	var total float64
 	for _, ticket := range tickets {
-		fmt.Println(ticket.ID)
 		row := stmt.QueryRowContext(kontek, ticket.ID)
 
 		err := row.Scan(&ticket.Type, &ticket.Price)
@@ -303,7 +300,7 @@ func (repo EventRepo) CheckTotalValueDB(eventID int, tickets []domain.Ticket, ko
 	return total, nil
 }
 
-func (repo EventRepo) DecrementTicketStockDB(eventID int, tickets []domain.Ticket, kontek context.Context) error {
+func (repo EventRepo) DecrementTicketStockDB(eventID int, tickets []domain.TicketReq, kontek context.Context) error {
 	repo.mutek.Lock()
 	defer repo.mutek.Unlock()
 
@@ -367,7 +364,7 @@ func (repo EventRepo) DecrementTicketStockDB(eventID int, tickets []domain.Ticke
 			return errors.New("ticket not found for event")
 		}
 		if eventTickets.Quantity < ticket.Quantity {
-			return errors.New("not enough ticket stock")
+			return errors.New("NOT ENOUGH TICKET STOCK🤬🚨🤬🚨")
 		}
 		eventTickets.Quantity -= ticket.Quantity
 

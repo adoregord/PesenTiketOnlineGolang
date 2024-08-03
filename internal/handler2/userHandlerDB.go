@@ -321,6 +321,13 @@ func (h UserHandler) AddBalanceDB(c *gin.Context) {
 		logMessage = "Add Balance API Failed"
 		logStatus = http.StatusBadRequest
 		return
+	} else if Total <= 0 {
+		c.Writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(c.Writer).Encode(domain.Response{Message: "Total balance must be greater than 0", Status: http.StatusBadRequest})
+		logError = errors.New("total balance must be greater than 0")
+		logMessage = "Add Balance API Failed"
+		logStatus = http.StatusBadRequest
+		return
 	}
 
 	// send the data to usecase

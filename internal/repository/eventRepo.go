@@ -169,7 +169,7 @@ func (repo EventRepo) DecrementTicketStock(eventID int, tickets []domain.Ticket,
 		for _, ticket := range tickets {
 			if eventTicket.ID == ticket.ID || eventTicket.Type == ticket.Type {
 				if eventTicket.Quantity < ticket.Quantity {
-					return errors.New("not enough ticket stock")
+					return errors.New("NOT ENOUGH TICKET STOCK🤬🚨🤬🚨")
 				}
 				eventTicket.Quantity -= ticket.Quantity
 				// total += eventTicket.Price * float64(ticket.Quantity)

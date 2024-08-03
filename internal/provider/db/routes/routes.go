@@ -47,6 +47,8 @@ func SetupRoutes(database *sql.DB) *gin.Engine {
 
 	orderRoutes := router.Group("/order")
 	{
+		orderRoutes.GET("/view", orderHandler2.ViewAllOrdersDB)
+		orderRoutes.GET("/userView", orderHandler2.ViewUsersOrder)
 		orderRoutes.POST("/create", orderHandler2.CreateOrderDB)
 	}
 
