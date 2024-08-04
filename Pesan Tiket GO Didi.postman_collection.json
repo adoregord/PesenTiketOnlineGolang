@@ -1,0 +1,794 @@
+{
+	"info": {
+		"_postman_id": "6bc5ef34-82f2-434d-9cc1-b8d65290157c",
+		"name": "Pesan Tiket GO",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35394100"
+	},
+	"item": [
+		{
+			"name": "event",
+			"item": [
+				{
+					"name": "ini yang pake DB",
+					"item": [
+						{
+							"name": "View All events db",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/event/get",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"event",
+										"get"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "view id from DB",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/event/getByID?id=1",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"event",
+										"getByID"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateEventDB",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Consert2\",\r\n    \"date\": \"02-Jan-2006 15:04:05\",\r\n    \"description\": \"asdaweae\",\r\n    \"location\":\"asdaew\",\r\n    \"ticket\": [\r\n        {\"type\": \"VIP\", \"price\": 5000.0, \"quantity\": 50000000},\r\n\t\t{\"type\": \"CAT 1\", \"price\": 250.0, \"quantity\": 10000000},\r\n\t\t{\"type\": \"CAT 2\", \"price\": 100.0, \"quantity\": 10000000}\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/event/create",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"event",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Ticket To Event",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"ticket\": [\r\n\t\t{\"type\": \"Nikolaus\", \"price\": 250.0, \"quantity\": 10000000},\r\n\t\t{\"type\": \"awokwok\", \"price\": 100.0, \"quantity\": 10000000}\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/event/addTicket?id=2",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"event",
+										"addTicket"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete event",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/event/delete?id=1",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"event",
+										"delete"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "ini GAK pake DB",
+					"item": [
+						{
+							"name": "GetAll (Check event&stock Ticket)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/eventGet",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"eventGet"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetEventBy Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/eventGetById?id=6",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"eventGetById"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "6"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "eventGetByName",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/eventGetByName?name=Concert1",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"eventGetByName"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "Concert1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "eventUpdate",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\" : 1,\r\n    \"name\": \"konser1\",\r\n    \"date\": \"02-Jan-2006 15:04:05\",\r\n    \"description\": \"awokwok\",\r\n    \"location\":\"awokwok\",\r\n    \"ticket\": [\r\n        {\"id\": 1, \"type\": \"VIP\", \"price\": 5000.0, \"quantity\": 5},\r\n\t\t{\"id\": 2, \"type\": \"CAT 1\", \"price\": 250.0, \"quantity\": 100}\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/eventUpdate",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"eventUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteEventId",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/eventDelete?id=3",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"eventDelete"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "addEvent",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Consert2sadaa\",\r\n    \"date\": \"02-Jan-2006 15:04:05\",\r\n    \"description\": \"asdaweae\",\r\n    \"location\":\"asdaew\",\r\n    \"ticket\": [\r\n        {\"id\": 1, \"type\": \"VIP\", \"price\": 5000.0, \"quantity\": 50000000},\r\n\t\t{\"id\": 2, \"type\": \"CAT 1\", \"price\": 250.0, \"quantity\": 10000000}\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/event",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"event"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "ini yang pake DB",
+					"item": [
+						{
+							"name": "view all user db",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/user/get",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"user",
+										"get"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "view user by id DB",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/user/getByID?id=1",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"user",
+										"getByID"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create user db",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"ayam\",\r\n    \"balance\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/user/create",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"user",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "add balance user",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/user/addBalance?id=1&total=200000000000000",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"user",
+										"addBalance"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "1"
+										},
+										{
+											"key": "total",
+											"value": "200000000000000"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete User",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/user/delete?id=2",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"user",
+										"delete"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "ini ga pake DB",
+					"item": [
+						{
+							"name": "Get All User",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/userGetAll",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"userGetAll"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/userGetById?id=1",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"userGetById"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User by Name",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/userGetByName?name=Didi",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"userGetByName"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "Didi"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add User",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Didi\",\r\n    \"balance\": 50000000\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/userPost",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"userPost"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update User",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/userUpdate",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"userUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete User",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/userDelete?id=1",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"userDelete"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Buy Ticket (order)",
+			"item": [
+				{
+					"name": "Ini yang pake DB",
+					"item": [
+						{
+							"name": "Buy Ticket DB",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userid\": 1,\r\n    \"eventid\": 1,\r\n    \"ticket\": [\r\n        {\"ID\": 1, \"Quantity\": 1},\r\n\t\t{\"ID\": 2, \"Quantity\": 1},\r\n\t\t{\"ID\": 3, \"Quantity\": 1}\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/order/create",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"order",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "view all orders",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/order/view",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"order",
+										"view"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "view user's db",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/order/userView?id=1",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"order",
+										"userView"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "ini GAK pake DB",
+					"item": [
+						{
+							"name": "See All Transaction",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/orderGetAll",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"orderGetAll"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "see user transaction",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var template = `\r",
+											"<style type=\"text/css\">\r",
+											"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+											"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+											"    .tftable tr {background-color:#ffffff;}\r",
+											"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+											"    .tftable tr:hover {background-color:#e0ffff;}\r",
+											"</style>\r",
+											"\r",
+											"<table class=\"tftable\" border=\"1\">\r",
+											"    <tr>\r",
+											"        <th>ID</th>\r",
+											"        <th>Date</th>\r",
+											"        <th>Status</th>\r",
+											"        <th>Payment Method</th>\r",
+											"        <th>User ID</th>\r",
+											"        <th>User Name</th>\r",
+											"        <th>Event Name</th>\r",
+											"        <th>Event Date</th>\r",
+											"        <th>Event Description</th>\r",
+											"        <th>Event Location</th>\r",
+											"        <th>Ticket Type</th>\r",
+											"        <th>Quantity</th>\r",
+											"        <th>Total Price</th>\r",
+											"    </tr>\r",
+											"    \r",
+											"    {{#each response}}\r",
+											"        <tr>\r",
+											"            <td>{{id}}</td>\r",
+											"            <td>{{date}}</td>\r",
+											"            <td>{{status}}</td>\r",
+											"            <td>{{payment_method}}</td>\r",
+											"            <td>{{user.id}}</td>\r",
+											"            <td>{{user.name}}</td>\r",
+											"            <td>{{event.name}}</td>\r",
+											"            <td>{{event.date}}</td>\r",
+											"            <td>{{event.description}}</td>\r",
+											"            <td>{{event.location}}</td>\r",
+											"            <td>{{event_ticket.type}}</td>\r",
+											"            <td>{{event_ticket.quantity}}</td>\r",
+											"            <td>{{total_price}}</td>\r",
+											"        </tr>\r",
+											"    {{/each}}\r",
+											"</table>\r",
+											"`;\r",
+											"\r",
+											"function constructVisualizerPayload() {\r",
+											"    return {response: pm.response.json()}\r",
+											"}\r",
+											"\r",
+											"pm.visualizer.set(template, constructVisualizerPayload());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/orderGetByUserId?id=1",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"orderGetByUserId"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "buy ticket",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userid\": 1,\r\n    \"eventid\": 6,\r\n    \"ticket\": [\r\n        {\"ID\": 1, \"Type\": \"VIP\", \"Quantity\": 1},\r\n\t\t{\"ID\": 2, \"Type\": \"CAT 1\", \"Quantity\": 1}\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/buyTicket",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"buyTicket"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
